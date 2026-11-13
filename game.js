@@ -590,18 +590,18 @@ function startBusiness(cardName) {
   };
 
   // Начальный склад: по 3 ед. каждого из нужных товаров + по 1 ед. остальных
-  const neededGoods = new Set([playerCard.needs, botCard.needs]);
-  Object.keys(GOODS).forEach(g => {
-    const qty = neededGoods.has(g) ? 3 : 1;
-    game.market.lots.push({
-      id: game.market.nextId++,
-      seller: 'neutral',
-      sellerName: 'Склад',
-      good: g,
-      qty,
-      price: Math.round(GOODS[g].base * 1.15)
-    });
+const neededGoods = new Set([playerCard.needs, botCard.needs]);
+Object.keys(GOODS).forEach(g => {
+  const qty = neededGoods.has(g) ? 5 : 2;
+  game.market.lots.push({
+    id: game.market.nextId++,
+    seller: 'neutral',
+    sellerName: 'Склад',
+    good: g,
+    qty,
+    price: Math.round(GOODS[g].base * 1.2)
   });
+});
 
   game.ui.businessTurn = 'player';
   game.ui.businessEnded = false;
@@ -610,6 +610,35 @@ function startBusiness(cardName) {
 
   showScreen('business');
 }
+
+function restockWarehouse() {
+  if (!game.market || !game.player.business || !game.bot) return;
+
+  const neededGoods = new Set([
+    game.player.business.card.needs,
+    game.bot.card.needs
+  ]);
+
+  Object.keys(GOODS).forEach(g => {
+    const isNeeded = neededGoods.has(g);
+    const existing = game.market.lots
+      .filter(l => l.seller === 'neutral' && l.good === g)
+      .reduce((sum, l) => sum + l.qty, 0);
+
+    const target = isNeeded ? 5 : 2;
+    if (existing < target) {
+      game.market.lots.push({
+        id: game.market.nextId++,
+        seller: 'neutral',
+        sellerName: 'Склад',
+        good: g,
+        qty: target - existing,
+        price: Math.round(GOODS[g].base * 1.2)
+      });
+    }
+  });
+}
+
 
 function renderCardHtml(card, inventory, hideInventory) {
   const have = inventory[card.needs] || 0;
@@ -702,7 +731,7 @@ function processPlayerCell() {
     case 'с':
       showMessageModal('Старт', 'Вы получили 100 обрезков за прохождение старта.', () => endPlayerTurnBusiness());
       break;
-    case 'р': openMarketModal(); break;
+    case 'р': restockWarehouse(); openMarketModal(); break;
     case 'п': openProductionModal(); break;
     case 'ш': applyPenaltyPlayer(); break;
     case 'пр':
@@ -809,8 +838,9 @@ function buyLot(id) {
   pb.money -= total;
   pb.inventory[lot.good] = (pb.inventory[lot.good] || 0) + lot.qty;
 
-  if (lot.seller === 'bot') game.bot.money += total;
-  game.market.lots = game.market.lots.filter(l => l.id !== id);
+if (lot.seller === 'bot') game.bot.money += total;
+game.market.lots = game.market.lots.filter(l => l.id !== id);
+if (lot.seller === 'neutral') restockWarehouse();
 
   closeModal();
   showMessageModal('Покупка', `Куплено ${lot.qty} ${lot.good} за ${total} обрезков.`, () => endPlayerTurnBusiness());
@@ -1001,7 +1031,7 @@ function botTurnBusiness() {
 function processBotCell() {
   const cell = game.board.cells[game.board.botPos];
   switch (cell) {
-    case 'р': botMarketAction(); break;
+    case 'р': restockWarehouse(); botMarketAction(); break;
     case 'п': botProductionAction(); break;
     case 'ш': botPenaltyAction(); break;
   }
