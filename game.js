@@ -258,7 +258,7 @@ function startBusiness() {
     name: botCardName,
     produces: playerCard.needs,
     needs: playerCard.produces,
-    needQty: 2,
+    needQty: 10,
     emoji: CARDS[botCardName] ? CARDS[botCardName].emoji : '🤖'
   };
 
