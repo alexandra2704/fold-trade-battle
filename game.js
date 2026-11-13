@@ -1,4 +1,9 @@
-const STORAGE_KEY = 'fold_trade_battle_save_v1';
+/* ============================================================
+   Fold, Trade & Battle — прототип (v2)
+   Все 10 визиток, редкости, фрагменты, галерея, аренда, скидка.
+   ============================================================ */
+
+const STORAGE_KEY = 'fold_trade_battle_save_v2';
 
 const BOARD_CELLS = [
   'с','р','п','пр','р','п','ш','р',
@@ -15,53 +20,62 @@ const CELL_META = {
   'ш': { name: 'Штраф', emoji: '⚠️', cls: 'penalty' }
 };
 
+/* ---------- Редкости ---------- */
+const RARITIES = {
+  simple:      { name: 'Простая',       fragments: 1,  rent: 20,  buyPrice: 150,  coinWin: 80,  paperWin: 1, color: '#9be59b' },
+  rare:        { name: 'Редкая',        fragments: 2,  rent: 40,  buyPrice: 350,  coinWin: 120, paperWin: 1, color: '#9bdbe5' },
+  epic:        { name: 'Эпическая',     fragments: 3,  rent: 60,  buyPrice: 600,  coinWin: 180, paperWin: 2, color: '#c9a0e0' },
+  legendary:   { name: 'Легендарная',   fragments: 5,  rent: 100, buyPrice: 1200, coinWin: 280, paperWin: 2, color: '#e5c79b' },
+  collectible: { name: 'Коллекционная', fragments: 10, rent: 150, buyPrice: 2500, coinWin: 400, paperWin: 3, color: '#e5a0a0' }
+};
+
+/* ---------- Товары ---------- */
 const GOODS = {
-  'еда': { base: 30, emoji: '🍲' },
-  'топливо': { base: 40, emoji: '⛽' },
-  'алкоголь': { base: 50, emoji: '🍺' }
+  'еда':      { base: 10, emoji: '🍲' },
+  'топливо':  { base: 12, emoji: '⛽' },
+  'алкоголь': { base: 14, emoji: '🍺' },
+  'работа':   { base: 16, emoji: '🔨' },
+  'удочки':   { base: 18, emoji: '🎣' },
+  'механизмы':{ base: 20, emoji: '⚙️' },
+  'стекло':   { base: 22, emoji: '🔮' },
+  'металл':   { base: 24, emoji: '🔩' },
+  'деньги':   { base: 26, emoji: '💵' },
+  'часы':     { base: 28, emoji: '⏰' }
 };
 
+/* ---------- Визитки (по GDD) ---------- */
 const CARDS = {
-  'Жи-есть': { produces: 'еда', needs: 'топливо', needQty: 10, emoji: '🥟' },
-  'С-метан-а': { produces: 'топливо', needs: 'еда', needQty: 10, emoji: '⛽' },
-  'Бадяга': { produces: 'алкоголь', needs: 'еда', needQty: 10, emoji: '🍺' }
+  'Жи-есть':       { produces: 'еда',      needs: ['удочки', 'часы', 'деньги'],               rarity: 'simple',      emoji: '🥟' },
+  'С-метан-а':     { produces: 'топливо',  needs: ['механизмы', 'металл', 'деньги'],          rarity: 'simple',      emoji: '⛽' },
+  'Бадяга':        { produces: 'алкоголь', needs: ['еда', 'топливо', 'стекло'],               rarity: 'simple',      emoji: '🍺' },
+  'Тяп-ляп':       { produces: 'работа',   needs: ['алкоголь', 'механизмы', 'еда'],           rarity: 'rare',        emoji: '🔨' },
+  'Живчик':        { produces: 'удочки',   needs: ['металл', 'часы', 'алкоголь'],             rarity: 'rare',        emoji: '🎣' },
+  'Шестерка':      { produces: 'механизмы',needs: ['деньги', 'еда', 'удочки'],                rarity: 'rare',        emoji: '⚙️' },
+  'Осколок':       { produces: 'стекло',   needs: ['топливо', 'удочки', 'металл'],            rarity: 'epic',        emoji: '🔮' },
+  'Р-туть':        { produces: 'металл',   needs: ['топливо', 'механизмы', 'работа'],         rarity: 'epic',        emoji: '🔩' },
+  'Алё, бизнес?':  { produces: 'деньги',   needs: ['работа', 'алкоголь', 'часы', 'стекло'],   rarity: 'legendary',   emoji: '💵' },
+  '23:59':         { produces: 'часы',     needs: ['стекло', 'механизмы', 'работа', 'металл'],rarity: 'collectible', emoji: '⏰' }
 };
 
+const STARTER_CARD = 'Жи-есть';
+
+/* ---------- Шаблоны юнитов ---------- */
 const TEMPLATES = {
-  scout: { id: 'scout', name: 'Разведчик', hp: 10, dmg: 2, cost: 50, paper: 1, points: 5, emoji: '🛶', unlockCycles: 0 },
-  frigate: { id: 'frigate', name: 'Фрегат', hp: 20, dmg: 4, cost: 120, paper: 2, points: 8, emoji: '⛵', unlockCycles: 2 },
-  battleship: { id: 'battleship', name: 'Линкор', hp: 30, dmg: 6, cost: 250, paper: 3, points: 12, emoji: '🚢', unlockCycles: 4 }
+  scout:      { id: 'scout',      name: 'Разведчик', hp: 10, dmg: 2, cost: 50,  paper: 1, points: 5,  emoji: '🛶', unlockCycles: 0 },
+  frigate:    { id: 'frigate',    name: 'Фрегат',    hp: 20, dmg: 4, cost: 120, paper: 2, points: 8,  emoji: '⛵', unlockCycles: 2 },
+  battleship: { id: 'battleship', name: 'Линкор',    hp: 30, dmg: 6, cost: 250, paper: 3, points: 12, emoji: '🚢', unlockCycles: 4 }
 };
 
 const FOLD_POSITIONS = {
-  5: [
-    { x: 20, y: 20 }, { x: 75, y: 20 }, { x: 80, y: 65 },
-    { x: 45, y: 80 }, { x: 15, y: 60 }
-  ],
-  8: [
-    { x: 15, y: 15 }, { x: 50, y: 10 }, { x: 85, y: 20 },
-    { x: 85, y: 60 }, { x: 60, y: 85 }, { x: 25, y: 85 },
-    { x: 10, y: 55 }, { x: 50, y: 50 }
-  ],
-  12: [
-    { x: 10, y: 12 }, { x: 40, y: 10 }, { x: 70, y: 12 },
-    { x: 88, y: 30 }, { x: 88, y: 60 }, { x: 70, y: 82 },
-    { x: 40, y: 88 }, { x: 15, y: 82 }, { x: 8, y: 55 },
-    { x: 25, y: 35 }, { x: 55, y: 35 }, { x: 65, y: 60 }
-  ]
+  5:  [{x:20,y:20},{x:75,y:20},{x:80,y:65},{x:45,y:80},{x:15,y:60}],
+  8:  [{x:15,y:15},{x:50,y:10},{x:85,y:20},{x:85,y:60},{x:60,y:85},{x:25,y:85},{x:10,y:55},{x:50,y:50}],
+  12: [{x:10,y:12},{x:40,y:10},{x:70,y:12},{x:88,y:30},{x:88,y:60},{x:70,y:82},
+       {x:40,y:88},{x:15,y:82},{x:8,y:55},{x:25,y:35},{x:55,y:35},{x:65,y:60}]
 };
 
+/* ---------- Игровое состояние ---------- */
 const game = {
-  player: {
-    coins: 100,
-    paper: 3,
-    level: 1,
-    cycles: 0,
-    fragments: 0,
-    unlocked: { scout: true, frigate: false, battleship: false },
-    fleet: [],
-    business: null
-  },
+  player: null,
   bot: null,
   board: null,
   market: null,
@@ -77,17 +91,75 @@ const game = {
   }
 };
 
-function $(id) {
-  return document.getElementById(id);
+/* ---------- Хелперы ---------- */
+function $(id) { return document.getElementById(id); }
+
+function isCardOwned(name) {
+  const card = CARDS[name];
+  if (!card) return false;
+  const max = RARITIES[card.rarity].fragments;
+  return (game.player.cardFragments[name] || 0) >= max;
 }
 
+function getOwnedCards() {
+  return Object.keys(CARDS).filter(isCardOwned);
+}
+
+function getCardRent(name) {
+  const card = CARDS[name];
+  if (!card) return 0;
+  let rent = RARITIES[card.rarity].rent;
+  if (game.player.discountCard === name) rent = Math.round(rent * 0.5);
+  return rent;
+}
+
+function cycleDiscount(justPlayedCard) {
+  const owned = getOwnedCards();
+  if (owned.length <= 1) {
+    game.player.discountCard = owned[0] || null;
+    return;
+  }
+  const others = owned.filter(n => n !== justPlayedCard);
+  game.player.discountCard = others[Math.floor(Math.random() * others.length)];
+}
+
+function refreshDiscountCard() {
+  const owned = getOwnedCards();
+  if (owned.length === 0) {
+    game.player.discountCard = null;
+  } else if (!owned.includes(game.player.discountCard)) {
+    game.player.discountCard = owned[0];
+  }
+}
+
+/* ---------- Инициализация игрока ---------- */
+function createDefaultPlayer() {
+  const cardFragments = {};
+  Object.keys(CARDS).forEach(name => { cardFragments[name] = 0; });
+  cardFragments[STARTER_CARD] = RARITIES[CARDS[STARTER_CARD].rarity].fragments;
+
+  return {
+    coins: 150,
+    paper: 3,
+    level: 1,
+    cycles: 0,
+    cardFragments,
+    discountCard: STARTER_CARD,
+    unlocked: { scout: true, frigate: false, battleship: false },
+    fleet: [],
+    business: null
+  };
+}
+
+/* ---------- Сохранение / загрузка ---------- */
 function saveProgress() {
   const data = {
     coins: game.player.coins,
     paper: game.player.paper,
     level: game.player.level,
     cycles: game.player.cycles,
-    fragments: game.player.fragments,
+    cardFragments: game.player.cardFragments,
+    discountCard: game.player.discountCard,
     unlocked: game.player.unlocked,
     fleet: game.player.fleet
   };
@@ -95,15 +167,16 @@ function saveProgress() {
 }
 
 function loadProgress() {
+  game.player = createDefaultPlayer();
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return;
     const data = JSON.parse(raw);
+
     if (typeof data.coins === 'number') game.player.coins = data.coins;
     if (typeof data.paper === 'number') game.player.paper = data.paper;
     if (typeof data.level === 'number') game.player.level = data.level;
     if (typeof data.cycles === 'number') game.player.cycles = data.cycles;
-    if (typeof data.fragments === 'number') game.player.fragments = data.fragments;
     if (data.unlocked) {
       game.player.unlocked = Object.assign(
         { scout: true, frigate: false, battleship: false },
@@ -111,10 +184,20 @@ function loadProgress() {
       );
     }
     if (Array.isArray(data.fleet)) game.player.fleet = data.fleet;
+    if (data.cardFragments && typeof data.cardFragments === 'object') {
+      Object.keys(CARDS).forEach(name => {
+        const v = data.cardFragments[name];
+        if (typeof v === 'number') game.player.cardFragments[name] = v;
+      });
+    }
+    if (typeof data.discountCard === 'string') {
+      game.player.discountCard = data.discountCard;
+    }
   } catch (e) {
     console.warn('Ошибка загрузки прогресса', e);
   }
   updateUnlocks(false);
+  refreshDiscountCard();
 }
 
 function updateUnlocks(save = true) {
@@ -132,16 +215,7 @@ function addCycles(n) {
 }
 
 function resetProgress() {
-  game.player = {
-    coins: 100,
-    paper: 3,
-    level: 1,
-    cycles: 0,
-    fragments: 0,
-    unlocked: { scout: true, frigate: false, battleship: false },
-    fleet: [],
-    business: null
-  };
+  game.player = createDefaultPlayer();
   game.bot = null;
   game.board = null;
   game.market = null;
@@ -155,13 +229,15 @@ function resetProgress() {
   showScreen('menu');
 }
 
+/* ---------- Ресурсы в шапке ---------- */
 function renderResources() {
+  const ownedCount = getOwnedCards().length;
   const html = `
     <span>🪙 ${game.player.coins}</span>
     <span>📄 ${game.player.paper}</span>
     <span>🏢 Ур. ${game.player.level}</span>
     <span>🔄 ${game.player.cycles}</span>
-    <span>🧩 ${game.player.fragments}</span>
+    <span>🎴 ${ownedCount}/10</span>
   `;
   ['menu-resources', 'business-resources', 'prep-resources', 'battle-resources'].forEach(id => {
     const el = $(id);
@@ -169,14 +245,19 @@ function renderResources() {
   });
 }
 
+/* ---------- Главное меню ---------- */
 function renderMenu() {
   renderResources();
+  const owned = getOwnedCards();
+  const totalFragments = Object.values(game.player.cardFragments).reduce((a,b) => a+b, 0);
+
   $('menu-stats').innerHTML = `
     <span>Монеты: ${game.player.coins}</span>
     <span>Бумага: ${game.player.paper}</span>
-    <span>Уровень компании: ${game.player.level}</span>
+    <span>Уровень: ${game.player.level}</span>
     <span>Циклы: ${game.player.cycles}</span>
-    <span>Фрагменты визиток: ${game.player.fragments}</span>
+    <span>Визиток собрано: ${owned.length}/${Object.keys(CARDS).length}</span>
+    <span>Фрагментов всего: ${totalFragments}</span>
     <span>Флот: ${game.player.fleet.length}/3</span>
   `;
 }
@@ -192,6 +273,7 @@ function showScreen(name) {
   if (name === 'battle') renderBattle();
 }
 
+/* ---------- Модалки ---------- */
 function openModal(title, html, onClose) {
   closeModal();
   const overlay = document.createElement('div');
@@ -238,45 +320,269 @@ function showMessageModal(title, text, onClose) {
   }
 }
 
-/* ============================= БИЗНЕС-СХВАТКА ============================= */
+/* ============================================================
+   ГАЛЕРЕЯ ВИЗИТОК
+   ============================================================ */
+function openGalleryModal() {
+  let modal;
+  function render() {
+    const cards = Object.entries(CARDS).map(([name, card]) => {
+      const rarity = RARITIES[card.rarity];
+      const have = game.player.cardFragments[name] || 0;
+      const max = rarity.fragments;
+      const owned = have >= max;
+      const isDiscount = game.player.discountCard === name;
 
-function startBusiness() {
-  const cardNames = Object.keys(CARDS);
-  const playerCardName = cardNames[Math.floor(Math.random() * cardNames.length)];
-  const playerCardDef = CARDS[playerCardName];
+      const nameDisplay = owned ? name : '???';
+      const emojiDisplay = owned ? card.emoji : '❓';
+
+      let infoHtml = '';
+      if (owned) {
+        infoHtml = `
+          <div>Производит: ${GOODS[card.produces].emoji} ${card.produces} (${GOODS[card.produces].base})</div>
+          <div>Нужно: ${card.needs.map(g => GOODS[g].emoji + ' ' + g).join(', ')}</div>
+          <div>Аренда: ${rarity.rent} 🪙 ${isDiscount ? '<span class="discount-badge">−50%</span>' : ''}</div>
+        `;
+      } else {
+        infoHtml = `
+          <div>Фрагменты: ${have}/${max}</div>
+          <div class="hint">Соберите все фрагменты или купите в галерее.</div>
+        `;
+      }
+
+      const buyBtn = owned
+        ? ''
+        : `<button class="big-btn" data-buy-card="${name}" ${game.player.coins < rarity.buyPrice ? 'disabled' : ''}>Купить за ${rarity.buyPrice} 🪙</button>`;
+
+      return `
+        <div class="gallery-card ${owned ? '' : 'locked'}">
+          <div class="card-emoji">${emojiDisplay}</div>
+          <div class="card-name">${nameDisplay}</div>
+          <div class="card-rarity">
+            <span class="rarity-badge" style="background:${rarity.color}">${rarity.name}</span>
+          </div>
+          <div class="card-info">${infoHtml}</div>
+          ${buyBtn ? `<div class="card-actions">${buyBtn}</div>` : ''}
+        </div>
+      `;
+    }).join('');
+
+    const totalCoins = game.player.coins;
+    const html = `
+      <p>Монеты: <strong>${totalCoins}</strong></p>
+      <div class="gallery-grid">${cards}</div>
+    `;
+    modal.querySelector('.modal-body').innerHTML = html;
+
+    modal.querySelectorAll('[data-buy-card]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const name = btn.getAttribute('data-buy-card');
+        buyCard(name);
+      });
+    });
+  }
+
+  function buyCard(name) {
+    const card = CARDS[name];
+    if (!card) return;
+    const rarity = RARITIES[card.rarity];
+    if (game.player.coins < rarity.buyPrice) return;
+    if (isCardOwned(name)) return;
+
+    game.player.coins -= rarity.buyPrice;
+    game.player.cardFragments[name] = rarity.fragments;
+    refreshDiscountCard();
+    saveProgress();
+    renderResources();
+    renderMenu();
+    render();
+    showMessageModal('Визитка куплена', `«${name}» добавлена в коллекцию.`, null);
+  }
+
+  modal = openModal('Галерея визиток', '<div id="gallery-body"></div>');
+  render();
+}
+
+/* ============================================================
+   ВЫБОР ВИЗИТКИ ДЛЯ БИЗНЕС-СХВАТКИ
+   ============================================================ */
+function openRentSelectionModal() {
+  const owned = getOwnedCards();
+
+  if (owned.length === 0) {
+    showMessageModal(
+      'Нет визиток',
+      'У вас нет ни одной визитки. Соберите фрагменты в бою или купите визитку в галерее.',
+      null
+    );
+    return;
+  }
+
+  // Safety net: если у игрока денег меньше минимальной аренды — выдаём кредит
+  const minRent = Math.min(...owned.map(getCardRent));
+  if (game.player.coins < minRent) {
+    game.player.coins = minRent + 50;
+    saveProgress();
+    renderResources();
+    showMessageModal(
+      'Поддержка',
+      `Вам выдан кредит ${minRent + 50} монет, чтобы продолжить игру.`,
+      null
+    );
+  }
+
+  let selected = null;
+  let modal;
+
+  function render() {
+    const cardsHtml = owned.map(name => {
+      const card = CARDS[name];
+      const rarity = RARITIES[card.rarity];
+      const rent = getCardRent(name);
+      const canAfford = game.player.coins >= rent;
+      const isDiscount = game.player.discountCard === name;
+      const isSelected = selected === name;
+
+      return `
+        <div class="rent-card ${isSelected ? 'selected' : ''} ${canAfford ? '' : 'unaffordable'}"
+             data-card="${name}"
+             ${canAfford ? '' : 'title="Недостаточно монет"'}>
+          <div style="font-size:1.5rem">${card.emoji}</div>
+          <div><strong>${name}</strong></div>
+          <div class="card-rarity">
+            <span class="rarity-badge" style="background:${rarity.color}">${rarity.name}</span>
+          </div>
+          <div>Производит: ${GOODS[card.produces].emoji} ${card.produces}</div>
+          <div>Нужно: ${card.needs.map(g => GOODS[g].emoji + ' ' + g).join(', ')}</div>
+          <div>Аренда: <strong>${rent} 🪙</strong>
+            ${isDiscount ? '<span class="discount-badge">−50%</span>' : ''}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const html = `
+      <p>Монеты: <strong>${game.player.coins}</strong>. Выберите визитку для игры.</p>
+      <div class="rent-grid">${cardsHtml}</div>
+      <div class="modal-actions">
+        <button id="btn-start-business" class="big-btn"
+          ${selected ? '' : 'disabled'}>
+          ${selected ? `Начать игру за ${getCardRent(selected)} 🪙` : 'Выберите визитку'}
+        </button>
+      </div>
+      <p class="hint">Скидка переходит на другую визитку после игры этой.</p>
+    `;
+    modal.querySelector('.modal-body').innerHTML = html;
+
+    modal.querySelectorAll('[data-card]').forEach(el => {
+      el.addEventListener('click', () => {
+        if (el.classList.contains('unaffordable')) return;
+        selected = el.getAttribute('data-card');
+        render();
+      });
+    });
+
+    const startBtn = modal.querySelector('#btn-start-business');
+    if (startBtn) {
+      startBtn.addEventListener('click', () => {
+        if (!selected) return;
+        closeModal();
+        startBusiness(selected);
+      });
+    }
+  }
+
+  modal = openModal('Выбор визитки', '<div id="rent-body"></div>');
+  render();
+}
+
+/* ============================================================
+   БИЗНЕС-СХВАТКА
+   ============================================================ */
+function pickBotCard(playerCardName, neededGood) {
+  // Приоритет 1: карта, которая производит нужный товар И нуждается в товаре игрока
+  const playerProduces = CARDS[playerCardName].produces;
+  const candidates = Object.keys(CARDS).filter(name => {
+    if (name === playerCardName) return false;
+    if (CARDS[name].produces !== neededGood) return false;
+    return CARDS[name].needs.includes(playerProduces);
+  });
+  if (candidates.length > 0) {
+    return candidates[Math.floor(Math.random() * candidates.length)];
+  }
+
+  // Приоритет 2: карта, которая производит нужный товар
+  const producers = Object.keys(CARDS).filter(name => {
+    if (name === playerCardName) return false;
+    return CARDS[name].produces === neededGood;
+  });
+  if (producers.length > 0) {
+    return producers[Math.floor(Math.random() * producers.length)];
+  }
+
+  // Fallback: любая другая карта
+  return Object.keys(CARDS).find(n => n !== playerCardName);
+}
+
+function startBusiness(cardName) {
+  const playerCardDef = CARDS[cardName];
+  if (!playerCardDef) return;
+
+  const rent = getCardRent(cardName);
+  if (game.player.coins < rent) {
+    showMessageModal('Недостаточно монет', `Нужно ${rent} 🪙 для аренды.`, null);
+    return;
+  }
+  game.player.coins -= rent;
+
+  // Скидка переходит на другую визитку
+  if (game.player.discountCard === cardName) {
+    cycleDiscount(cardName);
+  }
+  saveProgress();
+  renderResources();
+
+  // Выбираем нужный товар (один из списка)
+  const neededGood = playerCardDef.needs[Math.floor(Math.random() * playerCardDef.needs.length)];
+
+  // Бот получает карту, которая производит нужный товар игрока
+  const botCardName = pickBotCard(cardName, neededGood);
+  const botCardDef = CARDS[botCardName];
+  // Бот тоже нуждается в каком-то одном товаре из своего списка
+  const botNeededGood = botCardDef.needs[Math.floor(Math.random() * botCardDef.needs.length)];
 
   const playerCard = {
-    name: playerCardName,
+    name: cardName,
     produces: playerCardDef.produces,
-    needs: playerCardDef.needs,
-    needQty: playerCardDef.needQty,
+    needs: neededGood,          // одна строка
+    needQty: 10,
     emoji: playerCardDef.emoji
   };
-
-  const botCardName = cardNames.find(n => n !== playerCardName) || 'Бот-компания';
   const botCard = {
     name: botCardName,
-    produces: playerCard.needs,
-    needs: playerCard.produces,
+    produces: botCardDef.produces,
+    needs: botNeededGood,
     needQty: 10,
-    emoji: CARDS[botCardName] ? CARDS[botCardName].emoji : '🤖'
+    emoji: botCardDef.emoji
   };
 
   game.player.business = {
     money: 100,
-    inventory: { 'еда': 0, 'топливо': 0, 'алкоголь': 0 },
+    inventory: {},
     card: playerCard,
     position: 0,
     hasMoved: false
   };
+  Object.keys(GOODS).forEach(g => { game.player.business.inventory[g] = 0; });
 
   game.bot = {
     money: 100,
-    inventory: { 'еда': 0, 'топливо': 0, 'алкоголь': 0 },
+    inventory: {},
     card: botCard,
     position: 0,
     hasMoved: false
   };
+  Object.keys(GOODS).forEach(g => { game.bot.inventory[g] = 0; });
 
   game.board = {
     cells: BOARD_CELLS.slice(),
@@ -289,14 +595,17 @@ function startBusiness() {
     nextId: 1
   };
 
-  ['еда', 'топливо', 'алкоголь'].forEach(g => {
+  // Начальный склад: по 3 ед. каждого из нужных товаров + по 1 ед. остальных
+  const neededGoods = new Set([playerCard.needs, botCard.needs]);
+  Object.keys(GOODS).forEach(g => {
+    const qty = neededGoods.has(g) ? 3 : 1;
     game.market.lots.push({
       id: game.market.nextId++,
       seller: 'neutral',
       sellerName: 'Склад',
       good: g,
-      qty: 2,
-      price: Math.round(GOODS[g].base * 1.1)
+      qty,
+      price: Math.round(GOODS[g].base * 1.15)
     });
   });
 
@@ -306,7 +615,6 @@ function startBusiness() {
   game.ui.dice = null;
 
   showScreen('business');
-  renderBusiness();
 }
 
 function renderCardHtml(card, inventory, hideInventory) {
@@ -378,23 +686,16 @@ function playerRollBusiness() {
   const roll = 1 + Math.floor(Math.random() * 6);
   game.ui.dice = roll;
   renderBusiness();
-
-  setTimeout(() => {
-    moveBusinessPlayer(roll);
-  }, 400);
+  setTimeout(() => moveBusinessPlayer(roll), 400);
 }
 
 function moveBusinessPlayer(roll) {
   const pb = game.player.business;
   let pos = game.board.playerPos;
-
   for (let i = 0; i < roll; i++) {
     pos = (pos + 1) % 32;
-    if (pos === 0) {
-      pb.money += 100;
-    }
+    if (pos === 0) pb.money += 100;
   }
-
   game.board.playerPos = pos;
   pb.hasMoved = true;
   renderBusiness();
@@ -403,30 +704,15 @@ function moveBusinessPlayer(roll) {
 
 function processPlayerCell() {
   const cell = game.board.cells[game.board.playerPos];
-
   switch (cell) {
     case 'с':
-      showMessageModal(
-        'Старт',
-        'Вы получили 100 обрезков за прохождение старта.',
-        () => endPlayerTurnBusiness()
-      );
+      showMessageModal('Старт', 'Вы получили 100 обрезков за прохождение старта.', () => endPlayerTurnBusiness());
       break;
-    case 'р':
-      openMarketModal();
-      break;
-    case 'п':
-      openProductionModal();
-      break;
-    case 'ш':
-      applyPenaltyPlayer();
-      break;
+    case 'р': openMarketModal(); break;
+    case 'п': openProductionModal(); break;
+    case 'ш': applyPenaltyPlayer(); break;
     case 'пр':
-      showMessageModal(
-        'Прогулка',
-        'Вы прогуливаетесь и пропускаете действие.',
-        () => endPlayerTurnBusiness()
-      );
+      showMessageModal('Прогулка', 'Вы прогуливаетесь и пропускаете действие.', () => endPlayerTurnBusiness());
       break;
   }
 }
@@ -443,44 +729,29 @@ function endPlayerTurnBusiness() {
 function applyPenaltyPlayer() {
   const pb = game.player.business;
   let penalty = 0;
-
   for (const g in pb.inventory) {
-    if (pb.inventory[g] > 0) {
-      penalty += pb.inventory[g] * GOODS[g].base * 0.25;
-    }
+    if (pb.inventory[g] > 0) penalty += pb.inventory[g] * GOODS[g].base * 0.25;
   }
   penalty = Math.round(penalty);
 
   if (penalty <= 0) {
-    showMessageModal(
-      'Штраф',
-      'У вас нет товара в инвентаре. Штраф не начислен.',
-      () => endPlayerTurnBusiness()
-    );
+    showMessageModal('Штраф', 'У вас нет товара в инвентаре. Штраф не начислен.', () => endPlayerTurnBusiness());
     return;
   }
 
   if (pb.money >= penalty) {
     pb.money -= penalty;
-    showMessageModal(
-      'Штраф',
-      `Выплачен штраф ${penalty} обрезков.`,
-      () => endPlayerTurnBusiness()
-    );
+    showMessageModal('Штраф', `Выплачен штраф ${penalty} обрезков.`, () => endPlayerTurnBusiness());
   } else {
     const confiscated = Object.keys(pb.inventory)
       .filter(g => pb.inventory[g] > 0)
-      .map(g => `${pb.inventory[g]} ${g}`)
-      .join(', ');
+      .map(g => `${pb.inventory[g]} ${g}`).join(', ');
     for (const g in pb.inventory) pb.inventory[g] = 0;
-    showMessageModal(
-      'Штраф',
-      `Не хватило обрезков. Товар конфискован: ${confiscated || '—'}.`,
-      () => endPlayerTurnBusiness()
-    );
+    showMessageModal('Штраф', `Не хватило обрезков. Товар конфискован: ${confiscated || '—'}.`, () => endPlayerTurnBusiness());
   }
 }
 
+/* ---------- Рынок ---------- */
 function openMarketModal() {
   const pb = game.player.business;
   let modal;
@@ -494,8 +765,9 @@ function openMarketModal() {
           return `
             <div class="lot-row">
               <div class="lot-info">
-                <strong>${GOODS[lot.good].emoji} ${lot.good}</strong> × ${lot.qty}<br>
-                Продавец: ${lot.sellerName} · Цена: ${lot.price} за ед. (итого ${total})
+                <strong>${GOODS[lot.good].emoji} ${lot.good}</strong> × ${lot.qty}
+                ${lot.good === pb.card.needs ? ' <span class="discount-badge">нужно</span>' : ''}<br>
+                Продавец: ${lot.sellerName} · ${lot.price} за ед. (итого ${total})
               </div>
               <button class="big-btn" data-buy="${lot.id}" ${canBuy ? '' : 'disabled'}>Купить</button>
             </div>
@@ -504,14 +776,13 @@ function openMarketModal() {
 
     const hasInventory = Object.keys(pb.inventory).some(g => pb.inventory[g] > 0);
     const html = `
-      <p>Ваши обрезки: <strong>${pb.money}</strong></p>
+      <p>Ваши обрезки: <strong>${pb.money}</strong> · Нужно: ${GOODS[pb.card.needs].emoji} ${pb.card.needs} (${pb.inventory[pb.card.needs] || 0}/${pb.card.needQty})</p>
       <div id="market-lots">${lotsHtml}</div>
       <div id="market-msg" class="hint"></div>
       <div class="modal-actions">
         <button id="btn-open-listing" class="big-btn" ${hasInventory ? '' : 'disabled'}>Выставить на продажу</button>
       </div>
     `;
-
     modal.querySelector('.modal-body').innerHTML = html;
 
     modal.querySelectorAll('[data-buy]').forEach(btn => {
@@ -525,10 +796,7 @@ function openMarketModal() {
     if (listingBtn) listingBtn.addEventListener('click', openListingModal);
   }
 
-  modal = openModal('Рынок', '<div id="market-body"></div>', () => {
-    endPlayerTurnBusiness();
-  });
-
+  modal = openModal('Рынок', '<div id="market-body"></div>', () => endPlayerTurnBusiness());
   renderMarket();
 }
 
@@ -547,24 +815,16 @@ function buyLot(id) {
   pb.money -= total;
   pb.inventory[lot.good] = (pb.inventory[lot.good] || 0) + lot.qty;
 
-  if (lot.seller === 'bot') {
-    game.bot.money += total;
-  }
-
+  if (lot.seller === 'bot') game.bot.money += total;
   game.market.lots = game.market.lots.filter(l => l.id !== id);
 
   closeModal();
-  showMessageModal(
-    'Покупка',
-    `Куплено ${lot.qty} ${lot.good} за ${total} обрезков.`,
-    () => endPlayerTurnBusiness()
-  );
+  showMessageModal('Покупка', `Куплено ${lot.qty} ${lot.good} за ${total} обрезков.`, () => endPlayerTurnBusiness());
 }
 
 function openListingModal() {
   const pb = game.player.business;
   const availableGoods = Object.keys(pb.inventory).filter(g => pb.inventory[g] > 0);
-
   if (availableGoods.length === 0) {
     const msg = $('market-msg');
     if (msg) msg.textContent = 'У вас нет товара для выставления.';
@@ -575,9 +835,7 @@ function openListingModal() {
   let qty = 1;
   let price = Math.round(GOODS[selectedGood].base * 0.8);
 
-  const modal = openModal('Выставить на продажу', '<div id="listing-body"></div>', () => {
-    endPlayerTurnBusiness();
-  });
+  const modal = openModal('Выставить на продажу', '<div id="listing-body"></div>', () => endPlayerTurnBusiness());
   const body = modal.querySelector('#listing-body');
 
   function clamp() {
@@ -585,17 +843,14 @@ function openListingModal() {
     if (qty > maxQty) qty = maxQty;
     if (qty < 1) qty = 1;
     const base = GOODS[selectedGood].base;
-    const minPrice = Math.round(base * 0.5);
-    const maxPrice = Math.round(base * 1.5);
-    if (price < minPrice) price = minPrice;
-    if (price > maxPrice) price = maxPrice;
+    if (price < Math.round(base * 0.5)) price = Math.round(base * 0.5);
+    if (price > Math.round(base * 1.5)) price = Math.round(base * 1.5);
   }
 
   function render() {
     clamp();
     const base = GOODS[selectedGood].base;
     const percent = Math.round((price / base) * 100);
-
     body.innerHTML = `
       <p>Выберите товар:</p>
       <div class="inventory-list">
@@ -620,7 +875,6 @@ function openListingModal() {
         <button id="btn-confirm-listing" class="big-btn">Выставить</button>
       </div>
     `;
-
     body.querySelectorAll('[data-good]').forEach(btn => {
       btn.addEventListener('click', () => {
         selectedGood = btn.getAttribute('data-good');
@@ -629,12 +883,10 @@ function openListingModal() {
         render();
       });
     });
-
     body.querySelector('#list-qty-minus').addEventListener('click', () => { qty--; render(); });
     body.querySelector('#list-qty-plus').addEventListener('click', () => { qty++; render(); });
-    body.querySelector('#list-price-minus').addEventListener('click', () => { price -= 5; render(); });
-    body.querySelector('#list-price-plus').addEventListener('click', () => { price += 5; render(); });
-
+    body.querySelector('#list-price-minus').addEventListener('click', () => { price -= 2; render(); });
+    body.querySelector('#list-price-plus').addEventListener('click', () => { price += 2; render(); });
     body.querySelector('#btn-confirm-listing').addEventListener('click', () => {
       clamp();
       const base = GOODS[selectedGood].base;
@@ -646,29 +898,20 @@ function openListingModal() {
         body.querySelector('#listing-msg').textContent = 'Цена вне диапазона 50–150%.';
         return;
       }
-
       pb.inventory[selectedGood] -= qty;
       game.market.lots.push({
         id: game.market.nextId++,
-        seller: 'player',
-        sellerName: 'Игрок',
-        good: selectedGood,
-        qty: qty,
-        price: price
+        seller: 'player', sellerName: 'Игрок',
+        good: selectedGood, qty, price
       });
-
       closeModal();
-      showMessageModal(
-        'Товар выставлен',
-        `Вы выставили ${qty} ${selectedGood} по ${price} обрезков за единицу.`,
-        () => endPlayerTurnBusiness()
-      );
+      showMessageModal('Товар выставлен', `Вы выставили ${qty} ${selectedGood} по ${price}.`, () => endPlayerTurnBusiness());
     });
   }
-
   render();
 }
 
+/* ---------- Производство ---------- */
 function openProductionModal() {
   const pb = game.player.business;
   const good = pb.card.produces;
@@ -687,9 +930,7 @@ function openProductionModal() {
     <div id="prod-msg" class="hint"></div>
   `;
 
-  const modal = openModal('Производство', html, () => {
-    endPlayerTurnBusiness();
-  });
+  const modal = openModal('Производство', html, () => endPlayerTurnBusiness());
 
   modal.querySelectorAll('[data-prod]').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -697,25 +938,19 @@ function openProductionModal() {
       let cost = 0;
       if (qty === 2) cost = cost2;
       if (qty === 3) cost = cost3;
-
       if (pb.money < cost) {
         modal.querySelector('#prod-msg').textContent = 'Не хватает обрезков для производства.';
         return;
       }
-
       pb.money -= cost;
       pb.inventory[good] = (pb.inventory[good] || 0) + qty;
-
       closeModal();
-      showMessageModal(
-        'Производство',
-        `Произведено ${qty} ${good}.`,
-        () => endPlayerTurnBusiness()
-      );
+      showMessageModal('Производство', `Произведено ${qty} ${good}.`, () => endPlayerTurnBusiness());
     });
   });
 }
 
+/* ---------- Мои визитки ---------- */
 function openPlayerCardsModal() {
   if (game.ui.businessTurn !== 'player' || game.ui.busy) return;
 
@@ -728,7 +963,7 @@ function openPlayerCardsModal() {
     <div class="paper-card">
       <h3>${card.emoji} ${card.name}</h3>
       <p>Производит: ${GOODS[card.produces].emoji} ${card.produces}</p>
-      <p>Нужно для закрытия: ${GOODS[card.needs].emoji} ${card.needs} × ${card.needQty} (есть ${have})</p>
+      <p>Нужно: ${GOODS[card.needs].emoji} ${card.needs} × ${card.needQty} (есть ${have})</p>
       <h4>Инвентарь</h4>
       <div class="inventory-list">${renderInventory(pb.inventory)}</div>
       <div class="modal-actions">
@@ -749,9 +984,9 @@ function openPlayerCardsModal() {
   }
 }
 
+/* ---------- Ход бота ---------- */
 function botTurnBusiness() {
   if (game.ui.businessEnded) return;
-
   const roll = 1 + Math.floor(Math.random() * 6);
   game.ui.dice = roll;
   renderBusiness();
@@ -771,17 +1006,10 @@ function botTurnBusiness() {
 
 function processBotCell() {
   const cell = game.board.cells[game.board.botPos];
-
   switch (cell) {
-    case 'р':
-      botMarketAction();
-      break;
-    case 'п':
-      botProductionAction();
-      break;
-    case 'ш':
-      botPenaltyAction();
-      break;
+    case 'р': botMarketAction(); break;
+    case 'п': botProductionAction(); break;
+    case 'ш': botPenaltyAction(); break;
   }
 
   if (checkBotWin()) return;
@@ -799,12 +1027,9 @@ function botProductionAction() {
   const bot = game.bot;
   const good = bot.card.produces;
   const base = GOODS[good].base;
-
   let qty = 1;
   if (bot.money >= Math.round(base * 0.5)) qty = 2;
-
   const cost = qty === 1 ? 0 : Math.round(base * 0.5);
-
   if (bot.money >= cost) {
     bot.money -= cost;
     bot.inventory[good] = (bot.inventory[good] || 0) + qty;
@@ -815,25 +1040,21 @@ function botProductionAction() {
 
 function botMarketAction() {
   const bot = game.bot;
-  const neededGood = bot.card.needs;
-  const have = bot.inventory[neededGood] || 0;
+  const needed = bot.card.needs;
+  const have = bot.inventory[needed] || 0;
 
   if (have < bot.card.needQty) {
-    const maxPrice = Math.round(GOODS[neededGood].base * 1.3);
+    const maxPrice = Math.round(GOODS[needed].base * 1.3);
     const candidates = game.market.lots
-      .filter(l => l.seller !== 'bot' && l.good === neededGood && l.price <= maxPrice && l.qty > 0)
+      .filter(l => l.seller !== 'bot' && l.good === needed && l.price <= maxPrice && l.qty > 0)
       .sort((a, b) => a.price - b.price);
 
     for (const lot of candidates) {
       const total = lot.price * lot.qty;
       if (bot.money >= total) {
         bot.money -= total;
-        bot.inventory[neededGood] = (bot.inventory[neededGood] || 0) + lot.qty;
-
-        if (lot.seller === 'player') {
-          game.player.business.money += total;
-        }
-
+        bot.inventory[needed] += lot.qty;
+        if (lot.seller === 'player') game.player.business.money += total;
         game.market.lots = game.market.lots.filter(l => l.id !== lot.id);
         break;
       }
@@ -842,18 +1063,14 @@ function botMarketAction() {
 
   const product = bot.card.produces;
   const productQty = bot.inventory[product] || 0;
-
   if (productQty > 0) {
     const listQty = Math.min(productQty, 3);
     const price = Math.round(GOODS[product].base * 1.1);
     bot.inventory[product] -= listQty;
     game.market.lots.push({
       id: game.market.nextId++,
-      seller: 'bot',
-      sellerName: 'Бот',
-      good: product,
-      qty: listQty,
-      price: price
+      seller: 'bot', sellerName: 'Бот',
+      good: product, qty: listQty, price
     });
   }
 }
@@ -861,21 +1078,13 @@ function botMarketAction() {
 function botPenaltyAction() {
   const bot = game.bot;
   let penalty = 0;
-
   for (const g in bot.inventory) {
-    if (bot.inventory[g] > 0) {
-      penalty += bot.inventory[g] * GOODS[g].base * 0.25;
-    }
+    if (bot.inventory[g] > 0) penalty += bot.inventory[g] * GOODS[g].base * 0.25;
   }
   penalty = Math.round(penalty);
-
   if (penalty <= 0) return;
-
-  if (bot.money >= penalty) {
-    bot.money -= penalty;
-  } else {
-    for (const g in bot.inventory) bot.inventory[g] = 0;
-  }
+  if (bot.money >= penalty) bot.money -= penalty;
+  else for (const g in bot.inventory) bot.inventory[g] = 0;
 }
 
 function checkBotWin() {
@@ -892,22 +1101,21 @@ function endBusiness(result) {
   game.ui.businessEnded = true;
   game.ui.busy = true;
 
-  let coins = 0;
-  let paper = 0;
-  let cycles = 0;
-  let title = '';
-  let text = '';
+  const playedCard = game.player.business ? game.player.business.card.name : STARTER_CARD;
+  const rarity = CARDS[playedCard] ? RARITIES[CARDS[playedCard].rarity] : RARITIES.simple;
+
+  let coins = 0, paper = 0, cycles = 0, title = '', text = '';
 
   if (result === 'player') {
-    coins = 80;
-    paper = 2;
+    coins = rarity.coinWin;
+    paper = rarity.paperWin;
     cycles = 1;
     title = 'Победа в бизнес-схватке!';
-    text = `Вы первыми закрыли визитку.<br>Награда: +${coins} монет, +${paper} бумаги, +${cycles} цикл.`;
+    text = `Вы первыми закрыли визитку.<br>Награда: +${coins} 🪙, +${paper} 📄, +${cycles} цикл.`;
   } else {
-    coins = 20;
+    coins = 30;
     title = 'Поражение в бизнес-схватке';
-    text = `Бот закрыл визитку раньше.<br>Утешительный приз: +${coins} монет.`;
+    text = `Бот закрыл визитку раньше.<br>Утешительный приз: +${coins} 🪙.`;
   }
 
   game.player.coins += coins;
@@ -916,23 +1124,12 @@ function endBusiness(result) {
   saveProgress();
   renderResources();
 
-  openModal(
-    title,
+  openModal(title,
     `<p>${text}</p><div class="modal-actions"><button id="modal-result-ok" class="big-btn">В главное меню</button></div>`,
-    () => {
-      cleanupBusiness();
-      showScreen('menu');
-    }
+    () => { cleanupBusiness(); showScreen('menu'); }
   );
-
   const ok = $('modal-result-ok');
-  if (ok) {
-    ok.addEventListener('click', () => {
-      closeModal();
-      cleanupBusiness();
-      showScreen('menu');
-    });
-  }
+  if (ok) ok.addEventListener('click', () => { closeModal(); cleanupBusiness(); showScreen('menu'); });
 }
 
 function cleanupBusiness() {
@@ -946,22 +1143,14 @@ function cleanupBusiness() {
   game.ui.dice = null;
 }
 
-/* ============================= СКЛАДЫВАНИЕ И БОЙ ============================= */
-
+/* ============================================================
+   ПОДГОТОВКА К БОЮ / СКЛАДЫВАНИЕ
+   ============================================================ */
 function renderBattlePrep() {
   renderResources();
-
-  $('prep-resources').innerHTML = `
-    <span>🪙 ${game.player.coins}</span>
-    <span>📄 ${game.player.paper}</span>
-    <span>🔄 ${game.player.cycles}</span>
-  `;
-
   $('fleet-count').textContent = `${game.player.fleet.length}/3`;
-
   const fleetEl = $('fleet-display');
   fleetEl.innerHTML = '';
-
   if (game.player.fleet.length === 0) {
     fleetEl.innerHTML = '<p class="hint">Флот пуст. Сложите юнита в разделе «Складывание».</p>';
   } else {
@@ -975,11 +1164,10 @@ function renderBattlePrep() {
       fleetEl.appendChild(div);
     });
   }
-
   $('btn-start-battle').disabled = game.player.fleet.length === 0;
 }
 
-function openGalleryModal() {
+function openGalleryTemplatesModal() {
   const html = `
     <div class="template-grid">
       ${Object.values(TEMPLATES).map(t => {
@@ -987,10 +1175,8 @@ function openGalleryModal() {
         return `
           <div class="template-card ${unlocked ? '' : 'locked'}">
             <h4>${t.emoji} ${t.name}</h4>
-            <div>HP: ${t.hp}</div>
-            <div>Урон: ${t.dmg}</div>
-            <div>Стоимость: ${t.cost} монет</div>
-            <div>Бумага: ${t.paper}</div>
+            <div>HP: ${t.hp} · Урон: ${t.dmg}</div>
+            <div>Цена: ${t.cost} 🪙 + ${t.paper} 📄</div>
             <div>Точек сгиба: ${t.points}</div>
             <div class="hint">${unlocked ? 'Доступен' : `Откроется после ${t.unlockCycles} циклов`}</div>
           </div>
@@ -1003,10 +1189,9 @@ function openGalleryModal() {
 
 function openFoldingModal() {
   if (game.player.fleet.length >= 3) {
-    showMessageModal('Флот полон', 'Максимум 3 юнита. Начните бой или очистите флот.', null);
+    showMessageModal('Флот полон', 'Максимум 3 юнита.', null);
     return;
   }
-
   const html = `
     <div class="template-grid">
       ${Object.values(TEMPLATES).map(t => {
@@ -1024,46 +1209,28 @@ function openFoldingModal() {
       }).join('')}
     </div>
   `;
-
   const modal = openModal('Складывание', html);
-
   modal.querySelectorAll('[data-template]').forEach(btn => {
     btn.addEventListener('click', () => {
       const id = btn.getAttribute('data-template');
       const t = TEMPLATES[id];
       if (!t) return;
       if (!game.player.unlocked[t.id] && game.player.cycles < t.unlockCycles) return;
-      if (game.player.fleet.length >= 3) {
-        showMessageModal('Флот полон', 'Максимум 3 юнита.', null);
-        return;
-      }
-      if (game.player.coins < t.cost || game.player.paper < t.paper) {
-        showMessageModal('Не хватает ресурсов', 'Нужно больше монет или бумаги.', null);
-        return;
-      }
-
+      if (game.player.fleet.length >= 3) { showMessageModal('Флот полон', 'Максимум 3 юнита.', null); return; }
+      if (game.player.coins < t.cost || game.player.paper < t.paper) { showMessageModal('Не хватает ресурсов', 'Нужно больше монет или бумаги.', null); return; }
       game.player.coins -= t.cost;
       game.player.paper -= t.paper;
       saveProgress();
-
       closeModal();
       startFoldingMiniGame(t);
     });
   });
 }
 
-function getFoldPositions(count) {
-  return FOLD_POSITIONS[count] || FOLD_POSITIONS[5];
-}
+function getFoldPositions(count) { return FOLD_POSITIONS[count] || FOLD_POSITIONS[5]; }
 
 function startFoldingMiniGame(template) {
-  game.ui.folding = {
-    template,
-    next: 1,
-    errors: 0,
-    totalPoints: template.points
-  };
-
+  game.ui.folding = { template, next: 1, errors: 0, totalPoints: template.points };
   const positions = getFoldPositions(template.points);
   const pointsHtml = positions.map((p, i) => `
     <button class="fold-point" data-point="${i + 1}" style="left:${p.x}%; top:${p.y}%;">${i + 1}</button>
@@ -1086,16 +1253,13 @@ function startFoldingMiniGame(template) {
   paper.addEventListener('click', (e) => {
     const btn = e.target.closest('.fold-point');
     if (!btn) return;
-
     const num = parseInt(btn.getAttribute('data-point'), 10);
     const f = game.ui.folding;
-    if (!f) return;
-    if (btn.classList.contains('done')) return;
+    if (!f || btn.classList.contains('done')) return;
 
     if (num === f.next) {
       btn.classList.add('done');
       f.next++;
-
       if (f.next > f.totalPoints) {
         const unit = {
           id: 'unit_' + Date.now() + '_' + Math.floor(Math.random() * 1000),
@@ -1108,14 +1272,9 @@ function startFoldingMiniGame(template) {
         };
         game.player.fleet.push(unit);
         saveProgress();
-
         closeModal();
         game.ui.folding = null;
-        showMessageModal(
-          'Успех!',
-          `Юнит «${unit.name}» добавлен во флот.`,
-          () => renderBattlePrep()
-        );
+        showMessageModal('Успех!', `Юнит «${unit.name}» добавлен во флот.`, () => renderBattlePrep());
       } else {
         status.textContent = `Ошибок: ${f.errors}`;
       }
@@ -1124,59 +1283,41 @@ function startFoldingMiniGame(template) {
       btn.classList.add('wrong');
       setTimeout(() => btn.classList.remove('wrong'), 300);
       status.textContent = `Ошибок: ${f.errors}`;
-
       if (f.errors >= 3) {
         closeModal();
         game.ui.folding = null;
-        showMessageModal(
-          'Складывание провалено',
-          'Вы допустили 3 ошибки. Ресурсы не возвращаются.',
-          () => renderBattlePrep()
-        );
+        showMessageModal('Складывание провалено', 'Вы допустили 3 ошибки. Ресурсы не возвращаются.', () => renderBattlePrep());
       }
     }
   });
 }
 
+/* ============================================================
+   БОЙ
+   ============================================================ */
 function startBattle() {
   if (!game.player.fleet || game.player.fleet.length === 0) return;
 
-  const playerUnits = game.player.fleet.map(u => ({
-    ...u,
-    hp: u.maxHp,
-    alive: true
-  }));
+  const playerUnits = game.player.fleet.map(u => ({ ...u, hp: u.maxHp, alive: true }));
 
   const botSize = Math.min(3, Math.max(1, game.player.fleet.length));
   const botUnits = [];
-
   for (let i = 0; i < botSize; i++) {
     let templateId = 'scout';
     if (game.player.cycles >= 4 && i === 0) templateId = 'battleship';
     else if (game.player.cycles >= 2 && i < 2) templateId = 'frigate';
-
     const t = TEMPLATES[templateId];
     botUnits.push({
       id: 'bot_' + i + '_' + Date.now(),
-      templateId: t.id,
-      name: t.name,
-      emoji: t.emoji,
-      maxHp: t.hp,
-      hp: t.hp,
-      dmg: t.dmg,
-      alive: true
+      templateId: t.id, name: t.name, emoji: t.emoji,
+      maxHp: t.hp, hp: t.hp, dmg: t.dmg, alive: true
     });
   }
 
   game.battle = {
-    playerUnits,
-    botUnits,
-    turn: null,
-    started: false,
-    over: false,
-    log: [],
-    resultShown: false,
-    dice: null
+    playerUnits, botUnits,
+    turn: null, started: false, over: false,
+    log: [], resultShown: false, dice: null
   };
 
   showScreen('battle');
@@ -1185,44 +1326,30 @@ function startBattle() {
 function renderUnitCard(unit, isEnemy) {
   const div = document.createElement('div');
   div.className = 'unit-card' + (isEnemy ? ' enemy' : '') + (unit.hp <= 0 ? ' dead' : '');
-
   const hpPercent = Math.max(0, Math.round((unit.hp / unit.maxHp) * 100));
   const fillColor = hpPercent > 50 ? 'var(--success)' : hpPercent > 25 ? '#d4a017' : 'var(--danger)';
-
   div.innerHTML = `
     <div class="unit-name">${unit.emoji} ${unit.name}</div>
     <div class="hp-bar"><div class="hp-bar-fill" style="width:${hpPercent}%; background:${fillColor};"></div></div>
     <div class="unit-stats">HP ${Math.max(0, unit.hp)}/${unit.maxHp} · Урон ${unit.dmg}</div>
   `;
-
   if (isEnemy && game.battle && game.battle.started && !game.battle.over && game.battle.turn === 'player' && unit.hp > 0) {
     div.addEventListener('click', () => playerAttack(unit.id));
   }
-
   return div;
 }
 
 function renderBattle() {
   if (!game.battle) return;
-
   renderResources();
-  $('battle-resources').innerHTML = `
-    <span>🪙 ${game.player.coins}</span>
-    <span>📄 ${game.player.paper}</span>
-    <span>🔄 ${game.player.cycles}</span>
-  `;
-
   const pEl = $('battle-player-units');
   const bEl = $('battle-bot-units');
-  pEl.innerHTML = '';
-  bEl.innerHTML = '';
-
+  pEl.innerHTML = ''; bEl.innerHTML = '';
   game.battle.playerUnits.forEach(u => pEl.appendChild(renderUnitCard(u, false)));
   game.battle.botUnits.forEach(u => bEl.appendChild(renderUnitCard(u, true)));
 
   const started = game.battle.started;
   const over = game.battle.over;
-
   $('btn-battle-start').style.display = started ? 'none' : 'inline-block';
   $('btn-battle-start').disabled = game.battle.playerUnits.length === 0;
 
@@ -1240,47 +1367,28 @@ function renderBattle() {
 
 function startBattleDice() {
   if (!game.battle || game.battle.started) return;
-
   const roll = 1 + Math.floor(Math.random() * 6);
   game.battle.dice = roll;
   game.battle.started = true;
   game.battle.turn = roll % 2 === 0 ? 'player' : 'bot';
-
-  game.battle.log.push(
-    `🎲 Выпало ${roll}. Первым ходит ${game.battle.turn === 'player' ? 'игрок' : 'бот'}.`
-  );
-
+  game.battle.log.push(`🎲 Выпало ${roll}. Первым ходит ${game.battle.turn === 'player' ? 'игрок' : 'бот'}.`);
   renderBattle();
-
-  if (game.battle.turn === 'bot') {
-    setTimeout(botAttack, 800);
-  }
+  if (game.battle.turn === 'bot') setTimeout(botAttack, 800);
 }
 
 function playerAttack(targetId) {
   if (!game.battle || game.battle.turn !== 'player' || game.battle.over) return;
-
   const target = game.battle.botUnits.find(u => u.id === targetId);
   if (!target || target.hp <= 0) return;
-
   const attackers = game.battle.playerUnits.filter(u => u.hp > 0);
   if (attackers.length === 0) return;
-
   let totalDamage = 0;
   attackers.forEach(u => { totalDamage += u.dmg; });
-
   target.hp -= totalDamage;
   game.battle.log.push(`Ваши юниты атакуют ${target.name} на ${totalDamage} урона.`);
-
-  if (target.hp <= 0) {
-    target.hp = 0;
-    game.battle.log.push(`${target.name} уничтожен!`);
-  }
-
+  if (target.hp <= 0) { target.hp = 0; game.battle.log.push(`${target.name} уничтожен!`); }
   renderBattle();
-
   if (checkBattleEnd()) return;
-
   game.battle.turn = 'bot';
   renderBattle();
   setTimeout(botAttack, 700);
@@ -1288,36 +1396,18 @@ function playerAttack(targetId) {
 
 function botAttack() {
   if (!game.battle || game.battle.turn !== 'bot' || game.battle.over) return;
-
   const attackers = game.battle.botUnits.filter(u => u.hp > 0);
-  if (attackers.length === 0) {
-    checkBattleEnd();
-    return;
-  }
-
+  if (attackers.length === 0) { checkBattleEnd(); return; }
   const alivePlayers = game.battle.playerUnits.filter(u => u.hp > 0);
-  if (alivePlayers.length === 0) {
-    checkBattleEnd();
-    return;
-  }
-
+  if (alivePlayers.length === 0) { checkBattleEnd(); return; }
   const target = alivePlayers.reduce((min, u) => u.hp < min.hp ? u : min, alivePlayers[0]);
-
   let totalDamage = 0;
   attackers.forEach(u => { totalDamage += u.dmg; });
-
   target.hp -= totalDamage;
   game.battle.log.push(`Бот атакует ${target.name} на ${totalDamage} урона.`);
-
-  if (target.hp <= 0) {
-    target.hp = 0;
-    game.battle.log.push(`${target.name} уничтожен!`);
-  }
-
+  if (target.hp <= 0) { target.hp = 0; game.battle.log.push(`${target.name} уничтожен!`); }
   renderBattle();
-
   if (checkBattleEnd()) return;
-
   game.battle.turn = 'player';
   renderBattle();
 }
@@ -1325,64 +1415,66 @@ function botAttack() {
 function checkBattleEnd() {
   const playerAlive = game.battle.playerUnits.some(u => u.hp > 0);
   const botAlive = game.battle.botUnits.some(u => u.hp > 0);
-
   if (!playerAlive || !botAlive) {
     game.battle.over = true;
-    const win = playerAlive && !botAlive;
-    endBattle(win);
+    endBattle(playerAlive && !botAlive);
     return true;
   }
-
   return false;
+}
+
+function dropRandomFragment() {
+  const available = Object.keys(CARDS).filter(name => {
+    const max = RARITIES[CARDS[name].rarity].fragments;
+    return (game.player.cardFragments[name] || 0) < max;
+  });
+  if (available.length === 0) return null;
+  const card = available[Math.floor(Math.random() * available.length)];
+  game.player.cardFragments[card] = (game.player.cardFragments[card] || 0) + 1;
+  const max = RARITIES[CARDS[card].rarity].fragments;
+  return { card, complete: game.player.cardFragments[card] >= max };
 }
 
 function endBattle(win) {
   if (!game.battle || game.battle.resultShown) return;
   game.battle.resultShown = true;
 
-  let coins = 0;
-  let fragments = 0;
-  let cycles = 0;
-  let title = '';
-  let text = '';
+  let coins = 0, cycles = 0, title = '', text = '';
 
   if (win) {
     coins = 50;
-    fragments = 1;
     cycles = 1;
+    const drop = dropRandomFragment();
     title = 'Победа в бою!';
-    text = `Вражеский флот уничтожен.<br>Награда: +${coins} монет, +${fragments} фрагмент визитки, +${cycles} цикл.`;
+    let fragText = '';
+    if (drop) {
+      fragText = `<br>Получен фрагмент визитки «${drop.card}».`;
+      if (drop.complete) {
+        fragText += `<br><strong>Визитка «${drop.card}» полностью собрана!</strong>`;
+        refreshDiscountCard();
+      }
+    } else {
+      fragText = '<br>Все визитки уже собраны.';
+    }
+    text = `Вражеский флот уничтожен.<br>Награда: +${coins} 🪙, +${cycles} цикл.${fragText}`;
   } else {
     coins = 10;
     title = 'Поражение в бою';
-    text = `Ваш флот уничтожен.<br>Утешительный приз: +${coins} монет.`;
+    text = `Ваш флот уничтожен.<br>Утешительный приз: +${coins} 🪙.`;
   }
 
   game.player.coins += coins;
-  game.player.fragments += fragments;
   if (cycles) addCycles(cycles);
-
   game.player.fleet = [];
   saveProgress();
   renderResources();
 
-  openModal(
-    title,
+  openModal(title,
     `<p>${text}</p><div class="modal-actions"><button id="modal-battle-result-ok" class="big-btn">В главное меню</button></div>`,
-    () => {
-      cleanupBattle();
-      showScreen('menu');
-    }
+    () => { cleanupBattle(); showScreen('menu'); }
   );
-
   const ok = $('modal-battle-result-ok');
-  if (ok) {
-    ok.addEventListener('click', () => {
-      closeModal();
-      cleanupBattle();
-      showScreen('menu');
-    });
-  }
+  if (ok) ok.addEventListener('click', () => { closeModal(); cleanupBattle(); showScreen('menu'); });
 }
 
 function cleanupBattle() {
@@ -1390,40 +1482,38 @@ function cleanupBattle() {
   game.ui.busy = false;
 }
 
-/* ============================= СТАРТ ============================= */
-
+/* ============================================================
+   СБРОС ПРОГРЕССА
+   ============================================================ */
 function confirmReset() {
-  openModal(
-    'Сбросить прогресс?',
-    `<p>Все монеты, бумага, циклы, фрагменты и флот будут удалены. Это действие нельзя отменить.</p>
+  openModal('Сбросить прогресс?',
+    `<p>Все монеты, бумага, циклы, фрагменты, коллекция визиток и флот будут удалены. Это действие нельзя отменить.</p>
      <div class="modal-actions">
        <button id="btn-confirm-reset" class="danger-btn">Да, сбросить</button>
        <button id="btn-cancel-reset" class="secondary-btn">Отмена</button>
      </div>`
   );
-
-  $('btn-confirm-reset').addEventListener('click', () => {
-    closeModal();
-    resetProgress();
-  });
-
+  $('btn-confirm-reset').addEventListener('click', () => { closeModal(); resetProgress(); });
   $('btn-cancel-reset').addEventListener('click', closeModal);
 }
 
+/* ============================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   loadProgress();
   updateUnlocks(false);
   renderMenu();
   showScreen('menu');
 
-  $('btn-start-business').addEventListener('click', startBusiness);
+  $('btn-start-business').addEventListener('click', openRentSelectionModal);
   $('btn-start-battle-prep').addEventListener('click', () => showScreen('battle-prep'));
   $('btn-reset').addEventListener('click', confirmReset);
 
   $('btn-roll').addEventListener('click', playerRollBusiness);
   $('btn-business-cards').addEventListener('click', openPlayerCardsModal);
 
-  $('btn-gallery').addEventListener('click', openGalleryModal);
+  $('btn-gallery').addEventListener('click', openGalleryTemplatesModal);
   $('btn-folding').addEventListener('click', openFoldingModal);
   $('btn-start-battle').addEventListener('click', startBattle);
   $('btn-prep-menu').addEventListener('click', () => showScreen('menu'));
