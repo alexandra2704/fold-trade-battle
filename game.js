@@ -22,9 +22,9 @@ const GOODS = {
 };
 
 const CARDS = {
-  'Жи-есть': { produces: 'еда', needs: 'топливо', needQty: 2, emoji: '🥟' },
-  'С-метан-а': { produces: 'топливо', needs: 'еда', needQty: 2, emoji: '⛽' },
-  'Бадяга': { produces: 'алкоголь', needs: 'еда', needQty: 2, emoji: '🍺' }
+  'Жи-есть': { produces: 'еда', needs: 'топливо', needQty: 10, emoji: '🥟' },
+  'С-метан-а': { produces: 'топливо', needs: 'еда', needQty: 10, emoji: '⛽' },
+  'Бадяга': { produces: 'алкоголь', needs: 'еда', needQty: 10, emoji: '🍺' }
 };
 
 const TEMPLATES = {
