@@ -500,28 +500,24 @@ function openRentSelectionModal() {
    БИЗНЕС-СХВАТКА
    ============================================================ */
 function pickBotCard(playerCardName, neededGood) {
-  // Приоритет 1: карта, которая производит нужный товар И нуждается в товаре игрока
   const playerProduces = CARDS[playerCardName].produces;
-  const candidates = Object.keys(CARDS).filter(name => {
-    if (name === playerCardName) return false;
-    if (CARDS[name].produces !== neededGood) return false;
-    return CARDS[name].needs.includes(playerProduces);
-  });
-  if (candidates.length > 0) {
-    return candidates[Math.floor(Math.random() * candidates.length)];
-  }
 
-  // Приоритет 2: карта, которая производит нужный товар
+  // Бот всегда производит то, что нужно игроку, и всегда нуждается в том,
+  // что производит игрок. Это гарантирует взаимную торговлю и отсутствие софтлока.
   const producers = Object.keys(CARDS).filter(name => {
     if (name === playerCardName) return false;
     return CARDS[name].produces === neededGood;
   });
-  if (producers.length > 0) {
-    return producers[Math.floor(Math.random() * producers.length)];
+
+  if (producers.length === 0) {
+    return {
+      card: Object.keys(CARDS).find(n => n !== playerCardName),
+      needs: playerProduces
+    };
   }
 
-  // Fallback: любая другая карта
-  return Object.keys(CARDS).find(n => n !== playerCardName);
+  const botCardName = producers[Math.floor(Math.random() * producers.length)];
+  return { card: botCardName, needs: playerProduces };
 }
 
 function startBusiness(cardName) {
@@ -544,12 +540,10 @@ function startBusiness(cardName) {
 
   // Выбираем нужный товар (один из списка)
   const neededGood = playerCardDef.needs[Math.floor(Math.random() * playerCardDef.needs.length)];
-
-  // Бот получает карту, которая производит нужный товар игрока
-  const botCardName = pickBotCard(cardName, neededGood);
+  const botPick = pickBotCard(cardName, neededGood);
+  const botCardName = botPick.card;
   const botCardDef = CARDS[botCardName];
-  // Бот тоже нуждается в каком-то одном товаре из своего списка
-  const botNeededGood = botCardDef.needs[Math.floor(Math.random() * botCardDef.needs.length)];
+  const botNeededGood = botPick.needs;
 
   const playerCard = {
     name: cardName,
