@@ -514,3 +514,97 @@ button:disabled {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+.rarity-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.discount-badge {
+  background: #ff5722;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+  font-weight: bold;
+  margin-left: 4px;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.gallery-card {
+  background: #fff;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 10px;
+  text-align: center;
+  min-height: 130px;
+  display: flex;
+  flex-direction: column;
+}
+
+.gallery-card.locked {
+  opacity: 0.6;
+  background: #f0f0f0;
+}
+
+.gallery-card .card-emoji {
+  font-size: 2rem;
+}
+
+.gallery-card .card-name {
+  font-weight: bold;
+  margin: 4px 0;
+}
+
+.gallery-card .card-info {
+  font-size: 0.8rem;
+  text-align: left;
+  margin-top: 6px;
+  flex: 1;
+}
+
+.gallery-card .card-actions {
+  margin-top: 6px;
+}
+
+.rent-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.rent-card {
+  background: #fff;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+}
+
+.rent-card:hover:not(.unaffordable) {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.rent-card.selected {
+  border-color: var(--accent);
+  background: #e0f0ff;
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.rent-card.unaffordable {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
