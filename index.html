@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fold, Trade & Battle — прототип</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Главное меню -->
+    <section id="screen-menu" class="screen active">
+      <div class="top-bar">
+        <div class="title">📄 Fold, Trade & Battle</div>
+        <div class="resources" id="menu-resources"></div>
+      </div>
+
+      <div class="menu-content">
+        <div class="paper-card menu-card">
+          <h2>Бизнес-схватка</h2>
+          <p>Торгуй, производи и закрой визитку первым.</p>
+          <button id="btn-start-business" class="big-btn">Бизнес-схватка</button>
+        </div>
+        <div class="paper-card menu-card">
+          <h2>Бой</h2>
+          <p>Сложи бумажный флот и срази бота.</p>
+          <button id="btn-start-battle-prep" class="big-btn">Бой</button>
+        </div>
+      </div>
+
+      <div class="menu-footer">
+        <div id="menu-stats" class="stats"></div>
+        <button id="btn-reset" class="danger-btn">Сбросить прогресс</button>
+      </div>
+    </section>
+
+    <!-- Бизнес-схватка -->
+    <section id="screen-business" class="screen">
+      <div class="top-bar">
+        <div class="title">💼 Бизнес-схватка</div>
+        <div class="resources" id="business-resources"></div>
+      </div>
+
+      <div class="business-layout">
+        <div class="business-sidebar">
+          <div class="paper-card">
+            <h3>Ваша визитка</h3>
+            <div id="business-player-card"></div>
+          </div>
+          <div class="paper-card">
+            <h3>Визитка бота</h3>
+            <div id="business-bot-card"></div>
+          </div>
+          <div class="paper-card">
+            <h3>Ход</h3>
+            <div id="business-turn-info"></div>
+            <div id="dice-display" class="dice">🎲</div>
+            <button id="btn-roll" class="big-btn">Бросить кубик</button>
+            <button id="btn-business-cards" class="secondary-btn">Мои визитки</button>
+          </div>
+        </div>
+
+        <div class="board-wrap">
+          <div id="business-board" class="board"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Подготовка к бою -->
+    <section id="screen-battle-prep" class="screen">
+      <div class="top-bar">
+        <div class="title">🚢 Подготовка к бою</div>
+        <div class="resources" id="prep-resources"></div>
+      </div>
+
+      <div class="prep-layout">
+        <div class="paper-card">
+          <h3>Ваш флот <span id="fleet-count"></span></h3>
+          <div id="fleet-display" class="fleet-display"></div>
+          <p class="hint">Максимум 3 юнита. После боя флот очищается.</p>
+        </div>
+
+        <div class="paper-card">
+          <h3>Действия</h3>
+          <button id="btn-gallery" class="secondary-btn">Галерея шаблонов</button>
+          <button id="btn-folding" class="secondary-btn">Складывание</button>
+          <button id="btn-start-battle" class="big-btn">Начать бой</button>
+          <button id="btn-prep-menu" class="secondary-btn">В меню</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Бой -->
+    <section id="screen-battle" class="screen">
+      <div class="top-bar">
+        <div class="title">⚔️ Бой</div>
+        <div class="resources" id="battle-resources"></div>
+      </div>
+
+      <div class="battle-layout">
+        <div class="battle-side">
+          <h3>Ваш флот</h3>
+          <div id="battle-player-units" class="units"></div>
+        </div>
+
+        <div class="battle-center">
+          <div id="battle-turn-info" class="turn-info"></div>
+          <div id="battle-dice" class="dice">🎲</div>
+          <button id="btn-battle-start" class="big-btn">Начать бой</button>
+          <div id="battle-log" class="battle-log"></div>
+        </div>
+
+        <div class="battle-side">
+          <h3>Флот бота</h3>
+          <div id="battle-bot-units" class="units"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="modal-root"></div>
+  <script src="game.js"></script>
+</body>
+</html>
